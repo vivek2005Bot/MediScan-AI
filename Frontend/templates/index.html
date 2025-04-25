@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCare+ | Advanced Healthcare Solutions</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="{{ url_for('static', filename='language.js') }}"></script>
+  <script src="{{ url_for('static', filename='animations.js') }}"></script>
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <div class="container">
+      <div class="logo">
+        <h1><i class="fa-solid fa-staff-snake"></i> MediCare<span class="plus">+</span></h1>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#" class="active lang" key="nav-home">Home</a></li>
+          <li><a href="#services" class="lang" key="nav-services">Services</a></li>
+          <li><a href="#diagnostic" class="lang" key="nav-diagnostic">Diagnostic Tools</a></li>
+          <li><a href="#contact" class="lang" key="nav-contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="language-selector">
+        <select id="language-select">
+          <option value="en">English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="mr">मराठी (Marathi)</option>
+          <option value="gu">ગુજરાતી (Gujarati)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="ml">മലയാളം (Malayalam)</option>
+          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+        </select>
+      </div>
+      <div class="menu-btn">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="lang" key="hero-title">Advanced Healthcare at Your Fingertips</h1>
+        <p class="lang" key="hero-description">Access cutting-edge diagnostic tools, professional healthcare advice, and emergency assistance all in one place.</p>
+        <div class="cta-buttons">
+          <a href="#diagnostic" class="btn primary-btn lang" key="hero-cta-primary">Try Our Diagnostic Tools</a>
+          <a href="#services" class="btn secondary-btn lang" key="hero-cta-secondary">Explore Services</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.pexels.com/photos/3825586/pexels-photo-3825586.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Healthcare professionals">
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="services">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="lang" key="services-title">Our Services</h2>
+        <p class="lang" key="services-description">Comprehensive healthcare solutions designed for your well-being</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="icon">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <h3 class="lang" key="service-heart-title">Heart Health Assessment</h3>
+          <p class="lang" key="service-heart-description">Early detection of heart disease risk factors through comprehensive analysis</p>
+        </div>
+        <div class="service-card">
+          <div class="icon">
+            <i class="fas fa-prescription"></i>
+          </div>
+          <h3 class="lang" key="service-diabetes-title">Diabetes Screening</h3>
+          <p class="lang" key="service-diabetes-description">Advanced diabetes risk assessment and management guidelines</p>
+        </div>
+        <div class="service-card">
+          <div class="icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h3 class="lang" key="service-parkinsons-title">Parkinson's Analysis</h3>
+          <p class="lang" key="service-parkinsons-description">Early signs detection through specialized symptom evaluation</p>
+        </div>
+        <div class="service-card">
+          <div class="icon">
+            <i class="fas fa-microscope"></i>
+          </div>
+          <h3 class="lang" key="service-skin-title">Skin Condition Analysis</h3>
+          <p class="lang" key="service-skin-description">AI-powered skin condition assessment through image analysis</p>
+        </div>
+        <div class="service-card">
+          <div class="icon">
+            <i class="fas fa-x-ray"></i>
+          </div>
+          <h3 class="lang" key="service-mri-title">Brain MRI Evaluation</h3>
+          <p class="lang" key="service-mri-description">Advanced brain tumor detection through MRI scan analysis</p>
+        </div>
+        <div class="service-card">
+          <div class="icon">
+            <i class="fas fa-comments"></i>
+          </div>
+          <h3 class="lang" key="service-chatbot-title">AI Health Assistant</h3>
+          <p class="lang" key="service-chatbot-description">Get immediate answers to your health questions from our AI chatbot</p>
+          <a href="{{ url_for('chat_page') }}" class="btn chatbot-btn lang" key="chatbot-btn">Chat Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnostic Tools Section -->
+  <section id="diagnostic" class="diagnostic">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="lang" key="diagnostic-title">Diagnostic Tools</h2>
+        <p class="lang" key="diagnostic-description">Advanced health assessment tools to monitor your well-being</p>
+      </div>
+      
+      <div class="tabs">
+        <div class="tab-header">
+          <div class="tab-btn active" data-tab="heart">
+            <i class="fas fa-heartbeat"></i>
+            <span class="lang" key="tab-heart">Heart Health</span>
+          </div>
+          <div class="tab-btn" data-tab="diabetes">
+            <i class="fas fa-prescription"></i>
+            <span class="lang" key="tab-diabetes">Diabetes</span>
+          </div>
+          <div class="tab-btn" data-tab="parkinsons">
+            <i class="fas fa-brain"></i>
+            <span class="lang" key="tab-parkinsons">Parkinson's</span>
+          </div>
+          <div class="tab-btn" data-tab="skin">
+            <i class="fas fa-microscope"></i>
+            <span class="lang" key="tab-skin">Skin Analysis</span>
+          </div>
+          <div class="tab-btn" data-tab="brain">
+            <i class="fas fa-x-ray"></i>
+            <span class="lang" key="tab-brain">Brain MRI</span>
+          </div>
+        </div>
+        
+        <div class="tab-content">
+          <!-- Heart Health Tab -->
+          <div class="tab-pane active" id="heart-tab">
+            <div class="form-container">
+              <h3 class="lang" key="heart-form-title">Heart Disease Risk Assessment</h3>
+              <p class="lang" key="heart-form-description">Fill in the details below for a preliminary heart health assessment</p>
+              
+              <form action="/heart-prediction" method="post" class="prediction-form">
+                <div class="form-group">
+                  <label for="heart-age" class="lang" key="heart-age">Age</label>
+                  <input type="number" id="heart-age" name="age" required min="1" max="120">
+                </div>
+                
+                <div class="form-group">
+                  <label for="heart-gender" class="lang" key="heart-gender">Gender</label>
+                  <select id="heart-gender" name="gender" required>
+                    <option value="" disabled selected class="lang" key="select-option">Select an option</option>
+                    <option value="male" class="lang" key="gender-male">Male</option>
+                    <option value="female" class="lang" key="gender-female">Female</option>
+                    <option value="other" class="lang" key="gender-other">Other</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="heart-bp" class="lang" key="heart-bp">Blood Pressure (mmHg)</label>
+                  <input type="number" id="heart-bp" name="bp" required min="50" max="300">
+                </div>
+                
+                <div class="form-group">
+                  <label for="heart-cholesterol" class="lang" key="heart-cholesterol">Cholesterol (mg/dL)</label>
+                  <input type="number" id="heart-cholesterol" name="cholesterol" required min="100" max="600">
+                </div>
+                
+                <div class="form-group">
+                  <label for="heart-sugar" class="lang" key="heart-sugar">Fasting Blood Sugar (mg/dL)</label>
+                  <input type="number" id="heart-sugar" name="blood_sugar" required min="50" max="400">
+                </div>
+                
+                <div class="form-group">
+                  <label class="lang" key="heart-exercise">Regular Exercise?</label>
+                  <div class="radio-group">
+                    <label>
+                      <input type="radio" name="exercise" value="yes" required>
+                      <span class="lang" key="option-yes">Yes</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="exercise" value="no">
+                      <span class="lang" key="option-no">No</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Diabetes Tab -->
+          <div class="tab-pane" id="diabetes-tab">
+            <div class="form-container">
+              <h3 class="lang" key="diabetes-form-title">Diabetes Risk Assessment</h3>
+              <p class="lang" key="diabetes-form-description">Fill in the details below for a preliminary diabetes risk assessment</p>
+              
+              <form action="/diabetes-prediction" method="post" class="prediction-form">
+                <div class="form-group">
+                  <label for="diabetes-age" class="lang" key="diabetes-age">Age</label>
+                  <input type="number" id="diabetes-age" name="age" required min="1" max="120">
+                </div>
+                
+                <div class="form-group">
+                  <label for="diabetes-glucose" class="lang" key="diabetes-glucose">Glucose Level (mg/dL)</label>
+                  <input type="number" id="diabetes-glucose" name="glucose" required min="50" max="300">
+                </div>
+                
+                <div class="form-group">
+                  <label for="diabetes-bmi" class="lang" key="diabetes-bmi">BMI</label>
+                  <input type="number" id="diabetes-bmi" name="bmi" step="0.01" required min="10" max="50">
+                </div>
+                
+                <div class="form-group">
+                  <label for="diabetes-insulin" class="lang" key="diabetes-insulin">Insulin Level (mu U/ml)</label>
+                  <input type="number" id="diabetes-insulin" name="insulin" required min="0" max="500">
+                </div>
+                
+                <div class="form-group">
+                  <label for="diabetes-skin" class="lang" key="diabetes-skin">Skin Thickness (mm)</label>
+                  <input type="number" id="diabetes-skin" name="skin" step="0.1" required min="0" max="100">
+                </div>
+                
+                <div class="form-group">
+                  <label class="lang" key="diabetes-family">Family History of Diabetes?</label>
+                  <div class="radio-group">
+                    <label>
+                      <input type="radio" name="family_history" value="yes" required>
+                      <span class="lang" key="option-yes">Yes</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="family_history" value="no">
+                      <span class="lang" key="option-no">No</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Parkinson's Tab -->
+          <div class="tab-pane" id="parkinsons-tab">
+            <div class="form-container">
+              <h3 class="lang" key="parkinsons-form-title">Parkinson's Disease Assessment</h3>
+              <p class="lang" key="parkinsons-form-description">Fill in the details below for a preliminary Parkinson's disease assessment</p>
+              
+              <form action="/parkinsons-prediction" method="post" class="prediction-form">
+                <div class="form-group">
+                  <label for="parkinsons-age" class="lang" key="parkinsons-age">Age</label>
+                  <input type="number" id="parkinsons-age" name="age" required min="1" max="120">
+                </div>
+                
+                <div class="form-group">
+                  <label for="parkinsons-gender" class="lang" key="parkinsons-gender">Gender</label>
+                  <select id="parkinsons-gender" name="gender" required>
+                    <option value="" disabled selected class="lang" key="select-option">Select an option</option>
+                    <option value="male" class="lang" key="gender-male">Male</option>
+                    <option value="female" class="lang" key="gender-female">Female</option>
+                    <option value="other" class="lang" key="gender-other">Other</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="lang" key="parkinsons-tremor">Do you experience tremors at rest?</label>
+                  <div class="radio-group">
+                    <label>
+                      <input type="radio" name="tremor" value="yes" required>
+                      <span class="lang" key="option-yes">Yes</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="tremor" value="no">
+                      <span class="lang" key="option-no">No</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="lang" key="parkinsons-rigidity">Do you experience muscle stiffness or rigidity?</label>
+                  <div class="radio-group">
+                    <label>
+                      <input type="radio" name="rigidity" value="yes" required>
+                      <span class="lang" key="option-yes">Yes</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="rigidity" value="no">
+                      <span class="lang" key="option-no">No</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="lang" key="parkinsons-balance">Do you have difficulty with balance or walking?</label>
+                  <div class="radio-group">
+                    <label>
+                      <input type="radio" name="balance" value="yes" required>
+                      <span class="lang" key="option-yes">Yes</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="balance" value="no">
+                      <span class="lang" key="option-no">No</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="lang" key="parkinsons-speech">Have you noticed changes in your speech?</label>
+                  <div class="radio-group">
+                    <label>
+                      <input type="radio" name="speech" value="yes" required>
+                      <span class="lang" key="option-yes">Yes</span>
+                    </label>
+                    <label>
+                      <input type="radio" name="speech" value="no">
+                      <span class="lang" key="option-no">No</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Skin Analysis Tab -->
+          <div class="tab-pane" id="skin-tab">
+            <div class="form-container">
+              <h3 class="lang" key="skin-form-title">Skin Condition Analysis</h3>
+              <p class="lang" key="skin-form-description">Upload a clear image of the affected skin area for analysis</p>
+              
+              <form action="/skin-analysis" method="post" class="prediction-form" enctype="multipart/form-data">
+                <div class="upload-container">
+                  <div class="upload-area" id="skin-upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="lang" key="skin-upload">Drag & Drop or Click to Upload Image</p>
+                    <span class="lang" key="skin-upload-note">JPG, PNG or JPEG (Max 5MB)</span>
+                    <input type="file" id="skin-image" name="skin_image" accept="image/jpeg, image/png, image/jpg" required>
+                  </div>
+                  <div class="preview-container" id="skin-preview-container">
+                    <img id="skin-preview" src="#" alt="Preview">
+                    <button type="button" class="remove-btn" id="skin-remove-btn"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="skin-duration" class="lang" key="skin-duration">How long have you had this condition?</label>
+                  <select id="skin-duration" name="duration" required>
+                    <option value="" disabled selected class="lang" key="select-option">Select an option</option>
+                    <option value="days" class="lang" key="duration-days">Days</option>
+                    <option value="weeks" class="lang" key="duration-weeks">Weeks</option>
+                    <option value="months" class="lang" key="duration-months">Months</option>
+                    <option value="years" class="lang" key="duration-years">Years</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="skin-symptoms" class="lang" key="skin-symptoms">Any additional symptoms?</label>
+                  <textarea id="skin-symptoms" name="symptoms" rows="3"></textarea>
+                </div>
+                
+                <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Brain MRI Tab -->
+          <div class="tab-pane" id="brain-tab">
+            <div class="form-container">
+              <h3 class="lang" key="brain-form-title">Brain Tumor Detection</h3>
+              <p class="lang" key="brain-form-description">Upload an MRI scan image for brain tumor detection analysis</p>
+              
+              <form action="/brain-tumor-detection" method="post" class="prediction-form" enctype="multipart/form-data">
+                <div class="upload-container">
+                  <div class="upload-area" id="mri-upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="lang" key="mri-upload">Drag & Drop or Click to Upload MRI Scan</p>
+                    <span class="lang" key="mri-upload-note">JPG, PNG or JPEG (Max 10MB)</span>
+                    <input type="file" id="mri-image" name="mri_image" accept="image/jpeg, image/png, image/jpg" required>
+                  </div>
+                  <div class="preview-container" id="mri-preview-container">
+                    <img id="mri-preview" src="#" alt="Preview">
+                    <button type="button" class="remove-btn" id="mri-remove-btn"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="mri-date" class="lang" key="mri-date">Date of MRI Scan</label>
+                  <input type="date" id="mri-date" name="scan_date" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="mri-symptoms" class="lang" key="mri-symptoms">Symptoms Experienced</label>
+                  <textarea id="mri-symptoms" name="symptoms" rows="3"></textarea>
+                </div>
+                
+                <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="lang" key="contact-title">Contact Us</h2>
+        <p class="lang" key="contact-description">Reach out to our healthcare professionals for assistance</p>
+      </div>
+      
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <h3 class="lang" key="contact-address-title">Address</h3>
+              <p class="lang" key="contact-address">123 Healthcare Avenue, Medical District, New Delhi, 110001</p>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <i class="fas fa-phone-alt"></i>
+            <div>
+              <h3 class="lang" key="contact-phone-title">Phone</h3>
+              <p>
+                <a href="tel:+911234567890">+91 123 456 7890</a><br>
+                <a href="tel:+911234567891">+91 123 456 7891</a>
+              </p>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <h3 class="lang" key="contact-email-title">Email</h3>
+              <p>
+                <a href="mailto:info@medicare-plus.com">info@medicare-plus.com</a><br>
+                <a href="mailto:support@medicare-plus.com">support@medicare-plus.com</a>
+              </p>
+            </div>
+          </div>
+          
+          <div class="emergency-contact">
+            <h3 class="lang" key="emergency-title">Emergency Contact</h3>
+            <div class="emergency-number">
+              <i class="fas fa-ambulance"></i>
+              <div>
+                <p class="lang" key="emergency-ambulance">Ambulance Service</p>
+                <a href="tel:102" class="emergency-phone">102</a>
+              </div>
+            </div>
+            <div class="emergency-number">
+              <i class="fas fa-hospital"></i>
+              <div>
+                <p class="lang" key="emergency-helpline">National Health Helpline</p>
+                <a href="tel:1800118797" class="emergency-phone">1800-11-8797</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="contact-form">
+          <h3 class="lang" key="contact-form-title">Send Us a Message</h3>
+          <form action="/submit-contact" method="post">
+            <div class="form-group">
+              <label for="name" class="lang" key="contact-name">Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="email" class="lang" key="contact-email">Email</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone" class="lang" key="contact-phone">Phone</label>
+              <input type="tel" id="phone" name="phone" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="subject" class="lang" key="contact-subject">Subject</label>
+              <input type="text" id="subject" name="subject" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="message" class="lang" key="contact-message">Message</label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn primary-btn lang" key="btn-send">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <h3 class="lang" key="footer-about-title">About MediCare+</h3>
+          <p class="lang" key="footer-about-description">MediCare+ is a leading healthcare platform providing advanced diagnostic tools and medical services to ensure your well-being.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-links">
+          <h3 class="lang" key="footer-links-title">Quick Links</h3>
+          <ul>
+            <li><a href="#" class="lang" key="footer-link-home">Home</a></li>
+            <li><a href="#services" class="lang" key="footer-link-services">Services</a></li>
+            <li><a href="#diagnostic" class="lang" key="footer-link-diagnostic">Diagnostic Tools</a></li>
+            <li><a href="#contact" class="lang" key="footer-link-contact">Contact</a></li>
+            <li><a href="#" class="lang" key="footer-link-privacy">Privacy Policy</a></li>
+            <li><a href="#" class="lang" key="footer-link-terms">Terms of Service</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-services">
+          <h3 class="lang" key="footer-services-title">Our Services</h3>
+          <ul>
+            <li><a href="#heart-tab" class="lang" key="footer-service-heart">Heart Health</a></li>
+            <li><a href="#diabetes-tab" class="lang" key="footer-service-diabetes">Diabetes</a></li>
+            <li><a href="#parkinsons-tab" class="lang" key="footer-service-parkinsons">Parkinson's</a></li>
+            <li><a href="#skin-tab" class="lang" key="footer-service-skin">Skin Analysis</a></li>
+            <li><a href="#brain-tab" class="lang" key="footer-service-brain">Brain MRI</a></li>
+            <li><a href="#chatbot" class="lang" key="footer-service-chatbot">AI Health Assistant</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-newsletter">
+          <h3 class="lang" key="footer-newsletter-title">Newsletter</h3>
+          <p class="lang" key="footer-newsletter-description">Subscribe to our newsletter for the latest health updates and tips.</p>
+          <form action="/subscribe" method="post" class="newsletter-form">
+            <input type="email" name="email" placeholder="Your Email" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p class="lang" key="footer-copyright">&copy; 2025 MediCare+. All Rights Reserved.</p>
+        <p class="lang" key="footer-disclaimer">Disclaimer: This website is for informational purposes only and is not a substitute for professional medical advice.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
