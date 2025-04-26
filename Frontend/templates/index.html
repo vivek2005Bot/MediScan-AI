@@ -32,10 +32,7 @@
           <option value="bn">বাংলা (Bengali)</option>
           <option value="te">తెలుగు (Telugu)</option>
           <option value="ta">தமிழ் (Tamil)</option>
-          <option value="mr">मराठी (Marathi)</option>
-          <option value="gu">ગુજરાતી (Gujarati)</option>
           <option value="kn">ಕನ್ನಡ (Kannada)</option>
-          <option value="ml">മലയാളം (Malayalam)</option>
           <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
         </select>
       </div>
@@ -49,7 +46,7 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <h1 class="lang" key="hero-title">Advanced Healthcare at Your Fingertips</h1>
+        <h1 class="lang" key="hero-title">Your Health, Our Priority</h1>
         <p class="lang" key="hero-description">Access cutting-edge diagnostic tools, professional healthcare advice, and emergency assistance all in one place.</p>
         <div class="cta-buttons">
           <a href="#diagnostic" class="btn primary-btn lang" key="hero-cta-primary">Try Our Diagnostic Tools</a>
@@ -157,11 +154,12 @@
               <p class="lang" key="heart-form-description">Fill in the details below for a preliminary heart health assessment</p>
               
               <form action="/heart-prediction" method="post" class="prediction-form">
+  
                 <div class="form-group">
                   <label for="heart-age" class="lang" key="heart-age">Age</label>
                   <input type="number" id="heart-age" name="age" required min="1" max="120">
                 </div>
-                
+              
                 <div class="form-group">
                   <label for="heart-gender" class="lang" key="heart-gender">Gender</label>
                   <select id="heart-gender" name="gender" required>
@@ -171,38 +169,52 @@
                     <option value="other" class="lang" key="gender-other">Other</option>
                   </select>
                 </div>
-                
+              
                 <div class="form-group">
-                  <label for="heart-bp" class="lang" key="heart-bp">Blood Pressure (mmHg)</label>
-                  <input type="number" id="heart-bp" name="bp" required min="50" max="300">
+                  <label for="cp" class="lang" key="heart-cp">Chest Pain Type (cp)</label>
+                  <input type="number" id="cp" name="cp" required min="0" max="4">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label for="heart-cholesterol" class="lang" key="heart-cholesterol">Cholesterol (mg/dL)</label>
-                  <input type="number" id="heart-cholesterol" name="cholesterol" required min="100" max="600">
+                  <label for="thalach" class="lang" key="heart-thalach">Maximum Heart Rate (thalach)</label>
+                  <input type="number" id="thalach" name="thalach" required min="50" max="250">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label for="heart-sugar" class="lang" key="heart-sugar">Fasting Blood Sugar (mg/dL)</label>
-                  <input type="number" id="heart-sugar" name="blood_sugar" required min="50" max="400">
+                  <label for="exang" class="lang" key="heart-exang">Exercise Induced Angina (exang)</label>
+                  <select id="exang" name="exang" required>
+                    <option value="" disabled selected class="lang" key="select-option">Select an option</option>
+                    <option value="0" class="lang" key="option-no">No</option>
+                    <option value="1" class="lang" key="option-yes">Yes</option>
+                  </select>
                 </div>
-                
+              
                 <div class="form-group">
-                  <label class="lang" key="heart-exercise">Regular Exercise?</label>
-                  <div class="radio-group">
-                    <label>
-                      <input type="radio" name="exercise" value="yes" required>
-                      <span class="lang" key="option-yes">Yes</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="exercise" value="no">
-                      <span class="lang" key="option-no">No</span>
-                    </label>
-                  </div>
+                  <label for="oldspeak" class="lang" key="heart-oldspeak">ST Depression (oldspeak)</label>
+                  <input type="number" step="0.1" id="oldspeak" name="oldspeak" required min="0" max="10">
                 </div>
-                
+              
+                <div class="form-group">
+                  <label for="slope" class="lang" key="heart-slope">Slope of Peak Exercise ST Segment (slope)</label>
+                  <input type="number" id="slope" name="slope" required min="0" max="3">
+                </div>
+              
+                <div class="form-group">
+                  <label for="ca" class="lang" key="heart-ca">Number of Major Vessels (ca)</label>
+                  <input type="number" id="ca" name="ca" required min="0" max="4">
+                </div>
+              
+                <div class="form-group">
+                  <label for="thal" class="lang" key="heart-thal">Thalassemia (thal)</label>
+                  <input type="number" id="thal" name="thal" required min="0" max="3">
+                </div>
+    
+              
+              
+              
                 <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
-              </form>
+              
+              </form>              
             </div>
           </div>
           
@@ -213,47 +225,30 @@
               <p class="lang" key="diabetes-form-description">Fill in the details below for a preliminary diabetes risk assessment</p>
               
               <form action="/diabetes-prediction" method="post" class="prediction-form">
+  
                 <div class="form-group">
-                  <label for="diabetes-age" class="lang" key="diabetes-age">Age</label>
-                  <input type="number" id="diabetes-age" name="age" required min="1" max="120">
+                  <label for="diabetes-pregnancies" class="lang" key="diabetes-pregnancies">Pregnancies</label>
+                  <input type="number" id="diabetes-pregnancies" name="pregnancies" required min="0" max="20">
                 </div>
                 
                 <div class="form-group">
                   <label for="diabetes-glucose" class="lang" key="diabetes-glucose">Glucose Level (mg/dL)</label>
                   <input type="number" id="diabetes-glucose" name="glucose" required min="50" max="300">
                 </div>
-                
+              
                 <div class="form-group">
                   <label for="diabetes-bmi" class="lang" key="diabetes-bmi">BMI</label>
                   <input type="number" id="diabetes-bmi" name="bmi" step="0.01" required min="10" max="50">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label for="diabetes-insulin" class="lang" key="diabetes-insulin">Insulin Level (mu U/ml)</label>
-                  <input type="number" id="diabetes-insulin" name="insulin" required min="0" max="500">
+                  <label for="diabetes-age" class="lang" key="diabetes-age">Age</label>
+                  <input type="number" id="diabetes-age" name="age" required min="1" max="120">
                 </div>
-                
-                <div class="form-group">
-                  <label for="diabetes-skin" class="lang" key="diabetes-skin">Skin Thickness (mm)</label>
-                  <input type="number" id="diabetes-skin" name="skin" step="0.1" required min="0" max="100">
-                </div>
-                
-                <div class="form-group">
-                  <label class="lang" key="diabetes-family">Family History of Diabetes?</label>
-                  <div class="radio-group">
-                    <label>
-                      <input type="radio" name="family_history" value="yes" required>
-                      <span class="lang" key="option-yes">Yes</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="family_history" value="no">
-                      <span class="lang" key="option-no">No</span>
-                    </label>
-                  </div>
-                </div>
-                
+              
                 <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
-              </form>
+              
+              </form>              
             </div>
           </div>
           
@@ -264,79 +259,66 @@
               <p class="lang" key="parkinsons-form-description">Fill in the details below for a preliminary Parkinson's disease assessment</p>
               
               <form action="/parkinsons-prediction" method="post" class="prediction-form">
+
                 <div class="form-group">
-                  <label for="parkinsons-age" class="lang" key="parkinsons-age">Age</label>
-                  <input type="number" id="parkinsons-age" name="age" required min="1" max="120">
+                  <label for="mdvp-jitter" class="lang" key="mdvp-jitter">MDVP:Jitter(%)</label>
+                  <input type="number" id="mdvp-jitter" name="MDVP:Jitter(%)" step="0.0001" required min="0" max="1">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label for="parkinsons-gender" class="lang" key="parkinsons-gender">Gender</label>
-                  <select id="parkinsons-gender" name="gender" required>
-                    <option value="" disabled selected class="lang" key="select-option">Select an option</option>
-                    <option value="male" class="lang" key="gender-male">Male</option>
-                    <option value="female" class="lang" key="gender-female">Female</option>
-                    <option value="other" class="lang" key="gender-other">Other</option>
-                  </select>
+                  <label for="mdvp-jitter-abs" class="lang" key="mdvp-jitter-abs">MDVP:Jitter(Abs)</label>
+                  <input type="number" id="mdvp-jitter-abs" name="MDVP:Jitter(Abs)" step="0.000001" required min="0" max="0.1">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label class="lang" key="parkinsons-tremor">Do you experience tremors at rest?</label>
-                  <div class="radio-group">
-                    <label>
-                      <input type="radio" name="tremor" value="yes" required>
-                      <span class="lang" key="option-yes">Yes</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="tremor" value="no">
-                      <span class="lang" key="option-no">No</span>
-                    </label>
-                  </div>
+                  <label for="mdvp-rap" class="lang" key="mdvp-rap">MDVP:RAP</label>
+                  <input type="number" id="mdvp-rap" name="MDVP:RAP" step="0.0001" required min="0" max="1">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label class="lang" key="parkinsons-rigidity">Do you experience muscle stiffness or rigidity?</label>
-                  <div class="radio-group">
-                    <label>
-                      <input type="radio" name="rigidity" value="yes" required>
-                      <span class="lang" key="option-yes">Yes</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="rigidity" value="no">
-                      <span class="lang" key="option-no">No</span>
-                    </label>
-                  </div>
+                  <label for="mdvp-ppq" class="lang" key="mdvp-ppq">MDVP:PPQ</label>
+                  <input type="number" id="mdvp-ppq" name="MDVP:PPQ" step="0.0001" required min="0" max="1">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label class="lang" key="parkinsons-balance">Do you have difficulty with balance or walking?</label>
-                  <div class="radio-group">
-                    <label>
-                      <input type="radio" name="balance" value="yes" required>
-                      <span class="lang" key="option-yes">Yes</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="balance" value="no">
-                      <span class="lang" key="option-no">No</span>
-                    </label>
-                  </div>
+                  <label for="jitter-ddp" class="lang" key="jitter-ddp">Jitter:DDP</label>
+                  <input type="number" id="jitter-ddp" name="Jitter:DDP" step="0.0001" required min="0" max="1">
                 </div>
-                
+              
                 <div class="form-group">
-                  <label class="lang" key="parkinsons-speech">Have you noticed changes in your speech?</label>
-                  <div class="radio-group">
-                    <label>
-                      <input type="radio" name="speech" value="yes" required>
-                      <span class="lang" key="option-yes">Yes</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="speech" value="no">
-                      <span class="lang" key="option-no">No</span>
-                    </label>
-                  </div>
+                  <label for="mdvp-shimmer" class="lang" key="mdvp-shimmer">MDVP:Shimmer</label>
+                  <input type="number" id="mdvp-shimmer" name="MDVP:Shimmer" step="0.0001" required min="0" max="1">
                 </div>
-                
+              
+                <div class="form-group">
+                  <label for="mdvp-shimmer-db" class="lang" key="mdvp-shimmer-db">MDVP:Shimmer(dB)</label>
+                  <input type="number" id="mdvp-shimmer-db" name="MDVP:Shimmer(dB)" step="0.01" required min="0" max="5">
+                </div>
+              
+                <div class="form-group">
+                  <label for="shimmer-apq3" class="lang" key="shimmer-apq3">Shimmer:APQ3</label>
+                  <input type="number" id="shimmer-apq3" name="Shimmer:APQ3" step="0.0001" required min="0" max="1">
+                </div>
+              
+                <div class="form-group">
+                  <label for="shimmer-apq5" class="lang" key="shimmer-apq5">Shimmer:APQ5</label>
+                  <input type="number" id="shimmer-apq5" name="Shimmer:APQ5" step="0.0001" required min="0" max="1">
+                </div>
+              
+                <div class="form-group">
+                  <label for="mdvp-apq" class="lang" key="mdvp-apq">MDVP:APQ</label>
+                  <input type="number" id="mdvp-apq" name="MDVP:APQ" step="0.0001" required min="0" max="1">
+                </div>
+              
+                <div class="form-group">
+                  <label for="shimmer-dda" class="lang" key="shimmer-dda">Shimmer:DDA</label>
+                  <input type="number" id="shimmer-dda" name="Shimmer:DDA" step="0.0001" required min="0" max="1">
+                </div>
+              
                 <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+              
               </form>
+              
             </div>
           </div>
           
@@ -419,6 +401,14 @@
       </div>
     </div>
   </section>
+
+  <!-- Chatbot Button -->
+  <div class="chatbot-widget">
+    <button id="chatbot-toggle" class="chatbot-toggle">
+      <i class="fas fa-comments"></i>
+      <span class="lang" key="chatbot-label">Chat with Health Assistant</span>
+    </button>
+  </div>
 
   <!-- Contact Section -->
   <section id="contact" class="contact">

@@ -1,55 +1,70 @@
 import os
-import sys # To potentially modify path if needed, though Flask handles ../ well
+import pickle
 from flask import Flask, render_template, request, jsonify
-import google.generativeai as genai
 from dotenv import load_dotenv
+import google.generativeai as genai
 
-# --- Configuration ---
-# Option: If .env is in the project root (one level up from backend)
-# dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
-# load_dotenv(dotenv_path=dotenv_path)
-# Option: If .env is inside the backend folder
-load_dotenv() # Looks for .env in the current directory (backend) by default
+load_dotenv()
 
-# 1. Load API Key
 api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
-    raise ValueError("GOOGLE_API_KEY environment variable not set. Make sure it's accessible "
-                     "or your .env file is loaded correctly.")
+    raise ValueError("GOOGLE_API_KEY is not set")
 
-# 2. Configure the Google Generative AI client
 genai.configure(api_key=api_key)
-
-# 3. Select the Gemini model
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
-
-# 4. Initialize chat history
-#    (Still has the limitation of being shared across all users)
 chat_session = model.start_chat(history=[])
-# --- End Configuration ---
 
-
-# ***MODIFIED LINE HERE***
-# Calculate the path to the template folder relative to this script's location
-# Go up one level ('..') from 'backend', then into 'Frontend/templates'
+# Template and static directories
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 template_dir = os.path.join(base_dir, 'Frontend', 'templates')
 static_dir = os.path.join(base_dir, 'Frontend', 'static')
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
-# Alternatively, if relative paths work directly (often they do):
-# app = Flask(__name__, template_folder='../frontend/template')
 
 
-@app.route("/")
+# Load the ML model
+base_dir = os.path.dirname(os.path.abspath(__file__))
+scaler_path = os.path.join(base_dir, 'Notebook', 'Heartdieseas_scaler.pkl')
+with open(scaler_path, 'rb') as file:
+    scaler = pickle.load(file)
+
+model_path = os.path.join(base_dir, 'Notebook', 'Heartdieseas.pkl')
+with open(model_path, 'rb') as file:
+    heart_model = pickle.load(file)
+
+@app.route("/", methods=["GET", "POST"])
 def index():
-    """Renders the chat interface."""
-    try:
-        return render_template('index.html')
-    except Exception as e:
-        print(f"Error rendering template: {e}")
-        # Provide feedback if the template isn't found
-        return f"Error finding template. Looked in: {app.template_folder}. Error: {e}", 500
+    prediction = None
+
+    if request.method == "POST":
+        try:
+            # Extract features from form
+            features = [
+                float(request.form.get("age")),
+                float(request.form.get("sex")),
+                float(request.form.get("cp")),
+                float(request.form.get("trestbps")),
+                float(request.form.get("chol")),
+                float(request.form.get("fbs")),
+                float(request.form.get("restecg")),
+                float(request.form.get("thalach")),
+                float(request.form.get("exang")),
+                float(request.form.get("oldpeak")),
+                float(request.form.get("slope")),
+                float(request.form.get("ca")),
+                float(request.form.get("thal")),
+            ]
+
+            # Make prediction
+            scaled_features = scaler.transform([features])
+            result = heart_model.predict(scaled_features)[0]
+            prediction = "High Risk of Heart Disease" if result == 1 else "Low Risk of Heart Disease"
+
+
+        except Exception as e:
+            prediction = f"Error in prediction: {e}"
+
+    return render_template("index.html", prediction=prediction)
 
 @app.route("/chat")
 def chat_page():
@@ -57,34 +72,22 @@ def chat_page():
 
 @app.route("/get", methods=["POST"])
 def chat():
-    """Handles incoming chat messages and returns the AI's response."""
     try:
         user_message = request.form["msg"]
         if not user_message:
             return jsonify({"error": "Empty message received."}), 400
-
         response_text = get_gemini_response(user_message)
-        return response_text # Return plain text response
-
+        return response_text
     except Exception as e:
-        print(f"Error during chat processing: {e}")
-        return f"Error: Sorry, I encountered an issue. {e}"
-
+        return f"Error: {e}"
 
 def get_gemini_response(text):
-    """
-    Sends the user's text to the Gemini model via the ongoing chat session
-    and returns the model's response.
-    """
     try:
         response = chat_session.send_message(text)
         return response.text
     except Exception as e:
-        print(f"Error communicating with Google AI: {e}")
+        print(f"Gemini API error: {e}")
         raise e
 
 if __name__ == '__main__':
-    # Run the app
-    # Host '0.0.0.0' makes it accessible on your network,
-    # otherwise use '127.0.0.1' for local access only.
-    app.run(host='0.0.0.0', port=5000, debug=True) # Added host and port for clarity
+    app.run(host='0.0.0.0', port=5000, debug=True)
