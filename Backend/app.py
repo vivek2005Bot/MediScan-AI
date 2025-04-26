@@ -3,6 +3,8 @@ import pickle
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 from dotenv import load_dotenv
+from database import get_db_session, ChatHistory, HeartPrediction, DiabetesPrediction, ParkinsonPrediction
+from datetime import datetime
 
 load_dotenv()
 
@@ -76,6 +78,24 @@ def index():
                 scaled_features = heart_scaler.transform([heart_features])
                 result = heart_model.predict(scaled_features)[0]
                 heart_prediction = "High Risk of Heart Disease" if result == 1 else "Low Risk of Heart Disease"
+                
+                # Store prediction in database
+                session = get_db_session()
+                prediction = HeartPrediction(
+                    age=int(heart_features[0]),
+                    sex=int(heart_features[1]),
+                    cp=int(heart_features[2]),
+                    thalach=int(heart_features[3]),
+                    exang=int(heart_features[4]),
+                    oldpeak=float(heart_features[5]),
+                    slope=int(heart_features[6]),
+                    ca=int(heart_features[7]),
+                    thal=int(heart_features[8]),
+                    prediction=bool(result)
+                )
+                session.add(prediction)
+                session.commit()
+                session.close()
             except Exception as e:
                 heart_prediction = f"Error in heart disease prediction: {e}"
         # Diabetes Prediction
@@ -90,6 +110,19 @@ def index():
                 scaled_features = diabetes_scaler.transform([diabetes_features])
                 result = diabetes_model.predict(scaled_features)[0]
                 diabetes_prediction = "High Risk of Diabetes" if result == 1 else "Low Risk of Diabetes"
+                
+                # Store prediction in database
+                session = get_db_session()
+                prediction = DiabetesPrediction(
+                    pregnancies=int(diabetes_features[0]),
+                    glucose=float(diabetes_features[1]),
+                    bmi=float(diabetes_features[2]),
+                    age=int(diabetes_features[3]),
+                    prediction=bool(result)
+                )
+                session.add(prediction)
+                session.commit()
+                session.close()
             except Exception as e:
                 diabetes_prediction = f"Error in diabetes prediction: {e}"
         # Parkinson's Prediction
@@ -111,6 +144,26 @@ def index():
                 scaled_features = parkinson_scaler.transform([parkinson_features])
                 result = parkinson_model.predict(scaled_features)[0]
                 parkinson_prediction = "High Risk of Parkinson's Disease" if result == 1 else "Low Risk of Parkinson's Disease"
+                
+                # Store prediction in database
+                session = get_db_session()
+                prediction = ParkinsonPrediction(
+                    mdvp_jitter=float(parkinson_features[0]),
+                    mdvp_jitter_abs=float(parkinson_features[1]),
+                    mdvp_rap=float(parkinson_features[2]),
+                    mdvp_ppq=float(parkinson_features[3]),
+                    jitter_ddp=float(parkinson_features[4]),
+                    mdvp_shimmer=float(parkinson_features[5]),
+                    mdvp_shimmer_db=float(parkinson_features[6]),
+                    shimmer_apq3=float(parkinson_features[7]),
+                    shimmer_apq5=float(parkinson_features[8]),
+                    mdvp_apq=float(parkinson_features[9]),
+                    shimmer_dda=float(parkinson_features[10]),
+                    prediction=bool(result)
+                )
+                session.add(prediction)
+                session.commit()
+                session.close()
             except Exception as e:
                 parkinson_prediction = f"Error in Parkinson's prediction: {e}"
 
@@ -129,7 +182,20 @@ def chat():
         user_message = request.form["msg"]
         if not user_message:
             return jsonify({"error": "Empty message received."}), 400
+        
+        # Get response from Gemini
         response_text = get_gemini_response(user_message)
+        
+        # Store chat in database
+        session = get_db_session()
+        chat_entry = ChatHistory(
+            user_message=user_message,
+            bot_response=response_text
+        )
+        session.add(chat_entry)
+        session.commit()
+        session.close()
+        
         return response_text
     except Exception as e:
         return f"Error: {e}"
@@ -151,6 +217,25 @@ def predict_heart():
         scaled_features = heart_scaler.transform([heart_features])
         result = heart_model.predict(scaled_features)[0]
         prediction = "High Risk of Heart Disease" if result == 1 else "Low Risk of Heart Disease"
+        
+        # Store prediction in database
+        session = get_db_session()
+        prediction_entry = HeartPrediction(
+            age=int(heart_features[0]),
+            sex=int(heart_features[1]),
+            cp=int(heart_features[2]),
+            thalach=int(heart_features[3]),
+            exang=int(heart_features[4]),
+            oldpeak=float(heart_features[5]),
+            slope=int(heart_features[6]),
+            ca=int(heart_features[7]),
+            thal=int(heart_features[8]),
+            prediction=bool(result)
+        )
+        session.add(prediction_entry)
+        session.commit()
+        session.close()
+        
         return jsonify({"prediction": prediction})
     except Exception as e:
         return jsonify({"prediction": f"Error in heart disease prediction: {e}"})
@@ -167,6 +252,20 @@ def predict_diabetes():
         scaled_features = diabetes_scaler.transform([diabetes_features])
         result = diabetes_model.predict(scaled_features)[0]
         prediction = "High Risk of Diabetes" if result == 1 else "Low Risk of Diabetes"
+        
+        # Store prediction in database
+        session = get_db_session()
+        prediction_entry = DiabetesPrediction(
+            pregnancies=int(diabetes_features[0]),
+            glucose=float(diabetes_features[1]),
+            bmi=float(diabetes_features[2]),
+            age=int(diabetes_features[3]),
+            prediction=bool(result)
+        )
+        session.add(prediction_entry)
+        session.commit()
+        session.close()
+        
         return jsonify({"prediction": prediction})
     except Exception as e:
         return jsonify({"prediction": f"Error in diabetes prediction: {e}"})
@@ -190,6 +289,27 @@ def predict_parkinsons():
         scaled_features = parkinson_scaler.transform([parkinson_features])
         result = parkinson_model.predict(scaled_features)[0]
         prediction = "High Risk of Parkinson's Disease" if result == 1 else "Low Risk of Parkinson's Disease"
+        
+        # Store prediction in database
+        session = get_db_session()
+        prediction_entry = ParkinsonPrediction(
+            mdvp_jitter=float(parkinson_features[0]),
+            mdvp_jitter_abs=float(parkinson_features[1]),
+            mdvp_rap=float(parkinson_features[2]),
+            mdvp_ppq=float(parkinson_features[3]),
+            jitter_ddp=float(parkinson_features[4]),
+            mdvp_shimmer=float(parkinson_features[5]),
+            mdvp_shimmer_db=float(parkinson_features[6]),
+            shimmer_apq3=float(parkinson_features[7]),
+            shimmer_apq5=float(parkinson_features[8]),
+            mdvp_apq=float(parkinson_features[9]),
+            shimmer_dda=float(parkinson_features[10]),
+            prediction=bool(result)
+        )
+        session.add(prediction_entry)
+        session.commit()
+        session.close()
+        
         return jsonify({"prediction": prediction})
     except Exception as e:
         return jsonify({"prediction": f"Error in Parkinson's prediction: {e}"})
