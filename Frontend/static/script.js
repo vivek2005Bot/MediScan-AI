@@ -149,6 +149,11 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+  
+  // AJAX form submission for predictions
+  ajaxFormHandler('heart-form', '/predict/heart', 'heart-result');
+  ajaxFormHandler('diabetes-form', '/predict/diabetes', 'diabetes-result');
+  ajaxFormHandler('parkinsons-form', '/predict/parkinsons', 'parkinsons-result');
 });
 
 // Function to show image preview
@@ -165,33 +170,6 @@ function showPreview(fileInput, previewContainer, previewImg) {
     reader.readAsDataURL(fileInput.files[0]);
   }
 }
-
-// Form submission handling (for demonstration purposes)
-document.addEventListener('submit', function(e) {
-  const form = e.target;
-  
-  // Prevent actual form submission
-  e.preventDefault();
-  
-  // Show a success message or simulate processing
-  const submitButton = form.querySelector('button[type="submit"]');
-  const originalText = submitButton.textContent;
-  
-  submitButton.disabled = true;
-  submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-  
-  // Simulate API call/processing
-  setTimeout(() => {
-    form.innerHTML = `
-      <div class="success-message">
-        <i class="fas fa-check-circle"></i>
-        <h3>Request Submitted Successfully!</h3>
-        <p>Thank you for using our service. Your data has been received and is being processed.</p>
-        <p>You will receive the results shortly.</p>
-      </div>
-    `;
-  }, 2000);
-});
 
 // Add active class to current navigation item
 window.addEventListener('scroll', function() {
@@ -217,3 +195,26 @@ window.addEventListener('scroll', function() {
     }
   });
 });
+
+// AJAX form submission for predictions
+function ajaxFormHandler(formId, endpoint, resultId) {
+  const form = document.getElementById(formId);
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const resultDiv = document.getElementById(resultId);
+      resultDiv.innerHTML = '<span style="color: #007bff;">Processing...</span>';
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        resultDiv.innerHTML = `<div class="prediction-result"><h3>Prediction Result</h3><p class="prediction-text">${data.prediction}</p></div>`;
+      } catch (err) {
+        resultDiv.innerHTML = '<span style="color: red;">Error: Could not get prediction.</span>';
+      }
+    });
+  }
+}
