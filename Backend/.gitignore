@@ -1,2 +1,8 @@
 myev/
 .env
+DL dataset
+__pycache__/
+.ipynb_checkpoints/
+Backend/database/
+Dataset/
+

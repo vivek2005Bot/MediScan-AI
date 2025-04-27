@@ -15,7 +15,7 @@
   <header>
     <div class="container">
       <div class="logo">
-        <h1><i class="fa-solid fa-staff-snake"></i> MediCare<span class="plus">+</span></h1>
+        <h1><i class="fa-solid fa-staff-snake"></i> MediScan<span class="plus">+</span></h1>
       </div>
       <nav>
         <ul class="nav-links">
@@ -343,7 +343,7 @@
               <h3 class="lang" key="skin-form-title">Skin Condition Analysis</h3>
               <p class="lang" key="skin-form-description">Upload a clear image of the affected skin area for analysis</p>
               
-              <form action="/skin-analysis" method="post" class="prediction-form" enctype="multipart/form-data">
+              <form id="skin-form" class="prediction-form" enctype="multipart/form-data" onsubmit="return false;">
                 <div class="upload-container">
                   <div class="upload-area" id="skin-upload-area">
                     <i class="fas fa-cloud-upload-alt"></i>
@@ -357,24 +357,10 @@
                   </div>
                 </div>
                 
-                <div class="form-group">
-                  <label for="skin-duration" class="lang" key="skin-duration">How long have you had this condition?</label>
-                  <select id="skin-duration" name="duration" required>
-                    <option value="" disabled selected class="lang" key="select-option">Select an option</option>
-                    <option value="days" class="lang" key="duration-days">Days</option>
-                    <option value="weeks" class="lang" key="duration-weeks">Weeks</option>
-                    <option value="months" class="lang" key="duration-months">Months</option>
-                    <option value="years" class="lang" key="duration-years">Years</option>
-                  </select>
-                </div>
-                
-                <div class="form-group">
-                  <label for="skin-symptoms" class="lang" key="skin-symptoms">Any additional symptoms?</label>
-                  <textarea id="skin-symptoms" name="symptoms" rows="3"></textarea>
-                </div>
-                
                 <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
               </form>
+              
+              <div id="skin-result" class="result-container"></div>
             </div>
           </div>
           

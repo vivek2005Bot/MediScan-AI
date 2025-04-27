@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, Boolean, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -63,6 +63,15 @@ class ParkinsonPrediction(Base):
     mdvp_apq = Column(Float, nullable=False)
     shimmer_dda = Column(Float, nullable=False)
     prediction = Column(Boolean, nullable=False)  # 0 for Low Risk, 1 for High Risk
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+class SkinAnalysis(Base):
+    __tablename__ = 'skin_analysis'
+    
+    id = Column(Integer, primary_key=True)
+    image_data = Column(LargeBinary, nullable=False)
+    prediction = Column(String(255), nullable=False)
+    confidence = Column(Float, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
 # Create all tables

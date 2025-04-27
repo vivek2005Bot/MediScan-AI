@@ -1,0 +1,8 @@
+model.h5
+trained_model.keras
+Diabeties_scaler.pkl
+Diabeties.pkl
+Heartdieseas.pkl
+Heartdieseas_scaler.pkl
+parkinson_scaler.pkl
+parkinson.pkl

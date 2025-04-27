@@ -218,3 +218,70 @@ function ajaxFormHandler(formId, endpoint, resultId) {
     });
   }
 }
+
+// Skin Analysis Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+    const skinForm = document.getElementById('skin-form');
+    if (skinForm) {
+        skinForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event bubbling
+            
+            const formData = new FormData(this);
+            const resultDiv = document.getElementById('skin-result');
+            
+            // Clear previous results
+            resultDiv.innerHTML = '';
+            
+            // Show loading state
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Analyzing image...</div>';
+            
+            try {
+                const response = await fetch('/skin-analysis', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                
+                if (data.predictions && data.predictions.length > 0) {
+                    let resultHTML = '<div class="prediction-result">';
+                    resultHTML += '<h3>Analysis Results</h3>';
+                    
+                    data.predictions.forEach((pred, index) => {
+                        const confidencePercentage = (pred.confidence * 100).toFixed(2);
+                        resultHTML += `
+                            <div class="prediction-item ${index === 0 ? 'primary-prediction' : ''}">
+                                <h4>${pred.condition}</h4>
+                                <p class="confidence">Confidence: ${confidencePercentage}%</p>
+                                <p class="description">${pred.description}</p>
+                            </div>
+                        `;
+                    });
+                    
+                    resultHTML += '</div>';
+                    resultDiv.innerHTML = resultHTML;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="prediction-result">
+                            <h3>Analysis Result</h3>
+                            <p class="unidentified">Unable to confidently identify the condition. Please try with a clearer image.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Error: Could not analyze image. Please try again.
+                    </div>
+                `;
+            }
+        });
+    }
+});

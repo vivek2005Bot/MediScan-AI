@@ -1,10 +1,16 @@
 import os
 import pickle
+import numpy as np
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 from dotenv import load_dotenv
-from database import get_db_session, ChatHistory, HeartPrediction, DiabetesPrediction, ParkinsonPrediction
+from database import get_db_session, ChatHistory, HeartPrediction, DiabetesPrediction, ParkinsonPrediction, SkinAnalysis
 from datetime import datetime
+from PIL import Image
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 
@@ -313,6 +319,94 @@ def predict_parkinsons():
         return jsonify({"prediction": prediction})
     except Exception as e:
         return jsonify({"prediction": f"Error in Parkinson's prediction: {e}"})
+
+@app.route("/skin-analysis", methods=["POST"])
+def skin_analysis():
+    try:
+        if 'skin_image' not in request.files:
+            return jsonify({"error": "No image file provided"}), 400
+            
+        file = request.files['skin_image']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+            
+        # Create uploads directory if it doesn't exist
+        if not os.path.exists('uploads'):
+            os.makedirs('uploads')
+            
+        # Save the uploaded file
+        filename = secure_filename(file.filename)
+        filepath = os.path.join('uploads', filename)
+        file.save(filepath)
+        
+        # Load the model
+        model = tf.keras.models.load_model('Notebook/model.h5')
+        
+        # Process the image
+        img = tf.keras.utils.load_img(filepath, target_size=(224, 224))
+        img = tf.keras.utils.img_to_array(img)
+        img = np.expand_dims(img, axis=0)
+        img = img.reshape(-1, 224, 224, 3)
+        img = img / 255.0  # Normalize pixel values
+        
+        # Make prediction
+        predictions = model.predict(img)
+        predicted_class_index = np.argmax(predictions[0])
+        confidence = float(predictions[0][predicted_class_index])
+        
+        # Define class labels and descriptions
+        class_labels = ['Enfeksiyonel', 'Ekzama', 'Akne', 'Pigment', 'Benign', 'Malign', 'unidentified']
+        class_descriptions = {
+            'Enfeksiyonel': 'Infectious skin condition that may require medical attention',
+            'Ekzama': 'Chronic skin condition causing inflammation and irritation',
+            'Akne': 'Common skin condition affecting hair follicles and oil glands',
+            'Pigment': 'Pigmentation-related skin condition',
+            'Benign': 'Non-cancerous skin condition',
+            'Malign': 'Potentially serious skin condition requiring immediate medical attention',
+            'unidentified': 'Unable to confidently identify the condition'
+        }
+        
+        # Get all predictions above 40% confidence
+        valid_predictions = []
+        for i, conf in enumerate(predictions[0]):
+            if conf >= 0.4:  # 40% confidence threshold
+                valid_predictions.append({
+                    'condition': class_labels[i],
+                    'confidence': float(conf),
+                    'description': class_descriptions[class_labels[i]]
+                })
+        
+        # Sort predictions by confidence
+        valid_predictions.sort(key=lambda x: x['confidence'], reverse=True)
+        
+        # Store in database
+        session = get_db_session()
+        analysis = SkinAnalysis(
+            image_data=open(filepath, 'rb').read(),
+            prediction=valid_predictions[0]['condition'] if valid_predictions else 'unidentified',
+            confidence=valid_predictions[0]['confidence'] if valid_predictions else 0.0
+        )
+        session.add(analysis)
+        session.commit()
+        session.close()
+        
+        # Clean up uploaded file
+        os.remove(filepath)
+        
+        # Prepare response
+        response = jsonify({
+            "predictions": valid_predictions if valid_predictions else [{
+                'condition': 'unidentified',
+                'confidence': 0.0,
+                'description': class_descriptions['unidentified']
+            }]
+        })
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        
+        return response
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 def get_gemini_response(text):
     try:
