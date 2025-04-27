@@ -4,13 +4,18 @@ import numpy as np
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 from dotenv import load_dotenv
-from database import get_db_session, ChatHistory, HeartPrediction, DiabetesPrediction, ParkinsonPrediction, SkinAnalysis
+from database import get_db_session, ChatHistory, HeartPrediction, DiabetesPrediction, ParkinsonPrediction, SkinAnalysis, BrainMRI
 from datetime import datetime
 from PIL import Image
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from werkzeug.utils import secure_filename
+import warnings
+warnings.filterwarnings("ignore")
+import keras
+from keras.models import load_model
+
 
 load_dotenv()
 
@@ -407,6 +412,77 @@ def skin_analysis():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/brain-tumor-detection", methods=["POST"])
+def brain_tumor_detection():
+    try:
+        print("Here")
+        if 'mri_image' not in request.files:
+            return jsonify({"error": "No image file provided"}), 400
+        file = request.files['mri_image']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+
+        symptoms = request.form.get('symptoms') or ''
+
+        if not os.path.exists('uploads'):
+            os.makedirs('uploads')
+        filename = secure_filename(file.filename)
+        filepath = os.path.join('uploads', filename)
+        file.save(filepath)
+
+        # Load the model
+        try:
+            model = load_model('Notebook/Notebook/Brain_tumor.keras')
+        except Exception as e:
+            import traceback
+            print("Model loading error:", e)
+            traceback.print_exc()
+            return jsonify({"error": f"Model loading error: {e}"}), 500
+
+        # Process the image (⚡ corrected target size)
+        try:
+            img = tf.keras.utils.load_img(filepath, target_size=(240, 240))  # ✅ RESIZE to 240x240
+            img = tf.keras.utils.img_to_array(img)
+            img = np.expand_dims(img, axis=0)  # Shape: (1, 240, 240, 3)
+            img = img / 255.0  # Normalize
+            img = tf.convert_to_tensor(img, dtype=tf.float32)
+        except Exception as e:
+            import traceback
+            print("Image processing error:", e)
+            traceback.print_exc()
+            return jsonify({"error": f"Image processing error: {e}"}), 400
+
+        # Make prediction
+        try:
+            outputs = model(img, training=False)
+            confidence = float(outputs.numpy()[0][0])
+            result = "Tumor Detected" if confidence > 0.5 else "No Tumor Detected"
+        except Exception as e:
+            import traceback
+            print("Prediction error:", e)
+            traceback.print_exc()
+            return jsonify({"error": f"Prediction error: {e}"}), 500
+
+        # Clean up uploaded file
+        try:
+            os.remove(filepath)
+        except Exception as e:
+            print("Warning: Could not remove uploaded file:", e)
+
+        response = jsonify({
+            "prediction": result
+        })
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
+    except Exception as e:
+        import traceback
+        print("Brain tumor detection error:", e)
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 
 def get_gemini_response(text):
     try:

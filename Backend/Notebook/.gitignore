@@ -6,3 +6,6 @@ Heartdieseas.pkl
 Heartdieseas_scaler.pkl
 parkinson_scaler.pkl
 parkinson.pkl
+Notebook/
+logs/
+.ipynb_checkpoints/

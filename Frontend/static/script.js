@@ -97,12 +97,30 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (e.dataTransfer.files.length) {
         mriImage.files = e.dataTransfer.files;
-        showPreview(mriImage, mriPreviewContainer, mriPreview);
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          mriPreview.src = e.target.result;
+          mriPreviewContainer.style.display = 'block';
+          mriUploadArea.style.display = 'none';
+        };
+        
+        reader.readAsDataURL(mriImage.files[0]);
       }
     });
     
-    mriImage.addEventListener('change', () => {
-      showPreview(mriImage, mriPreviewContainer, mriPreview);
+    mriImage.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          mriPreview.src = e.target.result;
+          mriPreviewContainer.style.display = 'block';
+          mriUploadArea.style.display = 'none';
+        };
+        
+        reader.readAsDataURL(this.files[0]);
+      }
     });
     
     mriRemoveBtn.addEventListener('click', () => {
@@ -222,66 +240,147 @@ function ajaxFormHandler(formId, endpoint, resultId) {
 // Skin Analysis Form Handler
 document.addEventListener('DOMContentLoaded', function() {
     const skinForm = document.getElementById('skin-form');
-    if (skinForm) {
-        skinForm.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Prevent form submission
-            e.stopPropagation(); // Stop event bubbling
+    const resultDiv = document.getElementById('skin-result');
+    
+    if (!skinForm || !resultDiv) {
+        console.error('Required elements not found!');
+        return;
+    }
+    
+    skinForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const fileInput = document.getElementById('skin-image');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            resultDiv.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Please select an image to analyze.
+                </div>
+            `;
+            return;
+        }
+        
+        const formData = new FormData(this);
+        resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Analyzing image...</div>';
+        
+        try {
+            const response = await fetch('/skin-analysis', {
+                method: 'POST',
+                body: formData
+            });
             
-            const formData = new FormData(this);
-            const resultDiv = document.getElementById('skin-result');
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
             
-            // Clear previous results
-            resultDiv.innerHTML = '';
+            const data = await response.json();
             
-            // Show loading state
-            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Analyzing image...</div>';
-            
-            try {
-                const response = await fetch('/skin-analysis', {
-                    method: 'POST',
-                    body: formData
-                });
+            if (data.predictions && data.predictions.length > 0) {
+                let resultHTML = '<div class="prediction-result">';
+                resultHTML += '<h3>Analysis Results</h3>';
                 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                
-                const data = await response.json();
-                
-                if (data.predictions && data.predictions.length > 0) {
-                    let resultHTML = '<div class="prediction-result">';
-                    resultHTML += '<h3>Analysis Results</h3>';
-                    
-                    data.predictions.forEach((pred, index) => {
-                        const confidencePercentage = (pred.confidence * 100).toFixed(2);
-                        resultHTML += `
-                            <div class="prediction-item ${index === 0 ? 'primary-prediction' : ''}">
-                                <h4>${pred.condition}</h4>
-                                <p class="confidence">Confidence: ${confidencePercentage}%</p>
-                                <p class="description">${pred.description}</p>
-                            </div>
-                        `;
-                    });
-                    
-                    resultHTML += '</div>';
-                    resultDiv.innerHTML = resultHTML;
-                } else {
-                    resultDiv.innerHTML = `
-                        <div class="prediction-result">
-                            <h3>Analysis Result</h3>
-                            <p class="unidentified">Unable to confidently identify the condition. Please try with a clearer image.</p>
+                data.predictions.forEach((pred, index) => {
+                    resultHTML += `
+                        <div class="prediction-item ${index === 0 ? 'primary-prediction' : ''}">
+                            <h4>${pred.condition}</h4>
+                            <p class="description">${pred.description}</p>
                         </div>
                     `;
-                }
-            } catch (error) {
-                console.error('Error:', error);
+                });
+                
+                resultHTML += '</div>';
+                resultDiv.innerHTML = resultHTML;
+            } else {
                 resultDiv.innerHTML = `
-                    <div class="error">
-                        <i class="fas fa-exclamation-circle"></i>
-                        Error: Could not analyze image. Please try again.
+                    <div class="prediction-result">
+                        <h3>Analysis Result</h3>
+                        <p class="unidentified">Unable to confidently identify the condition. Please try with a clearer image.</p>
                     </div>
                 `;
             }
-        });
+        } catch (error) {
+            console.error('Error during analysis:', error);
+            resultDiv.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Error: ${error.message || 'Could not analyze image. Please try again.'}
+                </div>
+            `;
+        }
+    });
+});
+
+// Brain Tumor Detection Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+    const brainForm = document.getElementById('brain-form');
+    const resultDiv = document.getElementById('brain-result');
+    
+    if (!brainForm || !resultDiv) {
+        console.error('Required elements not found!');
+        return;
     }
+    
+    brainForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const fileInput = document.getElementById('mri-image');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            resultDiv.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Please select an MRI image to analyze.
+                </div>
+            `;
+            return;
+        }
+        
+        const formData = new FormData(this);
+        resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Analyzing MRI scan...</div>';
+        
+        try {
+            const response = await fetch('/brain-tumor-detection', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.prediction) {
+                resultDiv.innerHTML = `
+                    <div class="prediction-result">
+                        <h3>Analysis Result</h3>
+                        <div class="prediction-item ${data.prediction === 'Tumor Detected' ? 'warning' : 'success'}">
+                            <h4>${data.prediction}</h4>
+                            ${data.prediction === 'Tumor Detected' ? 
+                                '<p class="warning-note"><i class="fas fa-exclamation-triangle"></i> Please consult a healthcare professional for further evaluation.</p>' : 
+                                '<p class="success-note"><i class="fas fa-check-circle"></i> No tumor detected in the MRI scan.</p>'
+                            }
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Unable to analyze the MRI scan. Please try again with a clearer image.
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error during analysis:', error);
+            resultDiv.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Error: ${error.message || 'Could not analyze MRI scan. Please try again.'}
+                </div>
+            `;
+        }
+    });
 });

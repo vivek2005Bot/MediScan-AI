@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MediScan+ | Advanced Healthcare Solutions</title>
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="{{ url_for('static', filename='script.js') }}"></script>
@@ -342,24 +343,20 @@
             <div class="form-container">
               <h3 class="lang" key="skin-form-title">Skin Condition Analysis</h3>
               <p class="lang" key="skin-form-description">Upload a clear image of the affected skin area for analysis</p>
-              
               <form id="skin-form" class="prediction-form" enctype="multipart/form-data" onsubmit="return false;">
                 <div class="upload-container">
                   <div class="upload-area" id="skin-upload-area">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <p class="lang" key="skin-upload">Drag & Drop or Click to Upload Image</p>
-                    <span class="lang" key="skin-upload-note">JPG, PNG or JPEG (Max 5MB)</span>
+                    <p class="lang" key="skin-upload">Click to Upload Image</p>
                     <input type="file" id="skin-image" name="skin_image" accept="image/jpeg, image/png, image/jpg" required>
                   </div>
-                  <div class="preview-container" id="skin-preview-container">
+                  <div class="preview-container" id="skin-preview-container" style="display: none;">
                     <img id="skin-preview" src="#" alt="Preview">
                     <button type="button" class="remove-btn" id="skin-remove-btn"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
-                
-                <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+                <button type="submit" class="btn primary-btn analyze-btn lang" key="btn-analyze">Analyze</button>
               </form>
-              
               <div id="skin-result" class="result-container"></div>
             </div>
           </div>
@@ -369,33 +366,21 @@
             <div class="form-container">
               <h3 class="lang" key="brain-form-title">Brain Tumor Detection</h3>
               <p class="lang" key="brain-form-description">Upload an MRI scan image for brain tumor detection analysis</p>
-              
-              <form action="/brain-tumor-detection" method="post" class="prediction-form" enctype="multipart/form-data">
+              <form id="brain-form" class="prediction-form" enctype="multipart/form-data" onsubmit="return false;">
                 <div class="upload-container">
                   <div class="upload-area" id="mri-upload-area">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <p class="lang" key="mri-upload">Drag & Drop or Click to Upload MRI Scan</p>
-                    <span class="lang" key="mri-upload-note">JPG, PNG or JPEG (Max 10MB)</span>
+                    <p class="lang" key="mri-upload">Click to Upload MRI Scan</p>
                     <input type="file" id="mri-image" name="mri_image" accept="image/jpeg, image/png, image/jpg" required>
                   </div>
-                  <div class="preview-container" id="mri-preview-container">
+                  <div class="preview-container" id="mri-preview-container" style="display: none;">
                     <img id="mri-preview" src="#" alt="Preview">
                     <button type="button" class="remove-btn" id="mri-remove-btn"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
-                
-                <div class="form-group">
-                  <label for="mri-date" class="lang" key="mri-date">Date of MRI Scan</label>
-                  <input type="date" id="mri-date" name="scan_date" required>
-                </div>
-                
-                <div class="form-group">
-                  <label for="mri-symptoms" class="lang" key="mri-symptoms">Symptoms Experienced</label>
-                  <textarea id="mri-symptoms" name="symptoms" rows="3"></textarea>
-                </div>
-                
-                <button type="submit" class="btn primary-btn lang" key="btn-analyze">Analyze</button>
+                <button type="submit" class="btn primary-btn analyze-btn lang" key="btn-analyze">Analyze</button>
               </form>
+              <div id="brain-result" class="result-container"></div>
             </div>
           </div>
         </div>

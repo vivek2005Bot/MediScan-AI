@@ -74,6 +74,17 @@ class SkinAnalysis(Base):
     confidence = Column(Float, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
+class BrainMRI(Base):
+    __tablename__ = 'brain_mri'
+    
+    id = Column(Integer, primary_key=True)
+    image_data = Column(LargeBinary, nullable=False)
+    prediction = Column(String(255), nullable=False)
+    confidence = Column(Float, nullable=False)
+    scan_date = Column(DateTime, nullable=False)
+    symptoms = Column(Text)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
 # Create all tables
 Base.metadata.create_all(engine)
 
