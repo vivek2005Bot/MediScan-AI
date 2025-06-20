@@ -1,10 +1,10 @@
 import os
 import pickle
 import numpy as np
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import google.generativeai as genai
 from dotenv import load_dotenv
-from database import get_db_session, ChatHistory, HeartPrediction, DiabetesPrediction, ParkinsonPrediction, SkinAnalysis, BrainMRI
+from database import get_db_session, ChatHistory, HeartPrediction, DiabetesPrediction, ParkinsonPrediction, SkinAnalysis, BrainMRI, User
 from datetime import datetime
 from PIL import Image
 import tensorflow as tf
@@ -15,6 +15,8 @@ import warnings
 warnings.filterwarnings("ignore")
 import keras
 from keras.models import load_model
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_mail import Mail, Message
 
 
 load_dotenv()
@@ -33,6 +35,7 @@ template_dir = os.path.join(base_dir, 'Frontend', 'templates')
 static_dir = os.path.join(base_dir, 'Frontend', 'static')
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'your_default_secret_key')
 
 # Load the ML models and scalers
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -63,6 +66,15 @@ with open(parkinson_scaler_path, 'rb') as file:
 parkinson_model_path = os.path.join(base_dir, 'Notebook', 'parkinson.pkl')
 with open(parkinson_model_path, 'rb') as file:
     parkinson_model = pickle.load(file)
+
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', 'kvivek19738@gmail.com')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', 'asgzxakfgekkolca')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'kvivek19738@gmail.com')
+mail = Mail(app)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -482,7 +494,60 @@ def brain_tumor_detection():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        session_db = get_db_session()
+        existing_user = session_db.query(User).filter((User.username == username) | (User.email == email)).first()
+        if existing_user:
+            session_db.close()
+            return 'Username or email already exists', 400
+        password_hash = generate_password_hash(password)
+        new_user = User(username=username, email=email, password_hash=password_hash)
+        session_db.add(new_user)
+        session_db.commit()
+        session_db.close()
+        return 'Registration successful', 200
+    return render_template('register.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        session_db = get_db_session()
+        user = session_db.query(User).filter_by(username=username).first()
+        if user and check_password_hash(user.password_hash, password):
+            session['user_id'] = user.id
+            session_db.close()
+            return redirect(url_for('index'))
+        session_db.close()
+        return 'Invalid username or password', 401
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('index'))
+
+@app.route('/submit-contact', methods=['POST'])
+def submit_contact():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    subject = request.form.get('subject')
+    message = request.form.get('message')
+    try:
+        msg = Message(f"Contact Form: {subject}",
+                      recipients=['kvivek19738@gmail.com'])
+        msg.body = f"Name: {name}\nEmail: {email}\nPhone: {phone}\nSubject: {subject}\nMessage: {message}"
+        mail.send(msg)
+        return render_template('index.html', contact_success=True)
+    except Exception as e:
+        return render_template('index.html', contact_error=str(e))
 
 def get_gemini_response(text):
     try:

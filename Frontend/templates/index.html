@@ -11,7 +11,7 @@
   <script src="{{ url_for('static', filename='language.js') }}"></script>
   <script src="{{ url_for('static', filename='animations.js') }}"></script>
 </head>
-<body>
+<body class="{{ 'user-logged-in' if session.get('user_id') else 'user-logged-out' }}">
   <!-- Header Section -->
   <header>
     <div class="container">
@@ -35,10 +35,26 @@
           <option value="ta">தமிழ் (Tamil)</option>
           <option value="kn">ಕನ್ನಡ (Kannada)</option>
           <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+          
         </select>
       </div>
       <div class="menu-btn">
         <i class="fas fa-bars"></i>
+      </div>
+      <div class="auth-buttons" id="auth-buttons">
+        <button id="login-btn" class="btn secondary-btn">Login</button>
+        <button id="register-btn" class="btn primary-btn">Register</button>
+      </div>
+      <div class="user-menu" id="user-menu">
+        <div class="user-icon" id="user-icon">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="user-dropdown" id="user-dropdown">
+          <span class="user-label">Logged in</span>
+          <form action="/logout" method="get">
+            <button type="submit" class="btn secondary-btn" style="width:100%;margin-top:0.5rem;">Logout</button>
+          </form>
+        </div>
       </div>
     </div>
   </header>
@@ -277,57 +293,57 @@
               <form id="parkinsons-form" class="prediction-form" name="parkinsons-form">
                 <input type="hidden" name="form_type" value="parkinsons">
                 <div class="form-group">
-                  <label for="mdvp-jitter" class="lang" key="mdvp-jitter">MDVP:Jitter(%)</label>
+                  <label for="mdvp-jitter" class="lang" key="mdvp-jitter">Voice Frequency Variation (%)</label>
                   <input type="number" id="mdvp-jitter" name="MDVP:Jitter(%)" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="mdvp-jitter-abs" class="lang" key="mdvp-jitter-abs">MDVP:Jitter(Abs)</label>
+                  <label for="mdvp-jitter-abs" class="lang" key="mdvp-jitter-abs">Absolute Voice Frequency Variation</label>
                   <input type="number" id="mdvp-jitter-abs" name="MDVP:Jitter(Abs)" step="0.000001" required min="0" max="0.1">
                 </div>
               
                 <div class="form-group">
-                  <label for="mdvp-rap" class="lang" key="mdvp-rap">MDVP:RAP</label>
+                  <label for="mdvp-rap" class="lang" key="mdvp-rap">Average Frequency Perturbation (RAP)</label>
                   <input type="number" id="mdvp-rap" name="MDVP:RAP" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="mdvp-ppq" class="lang" key="mdvp-ppq">MDVP:PPQ</label>
+                  <label for="mdvp-ppq" class="lang" key="mdvp-ppq">Pitch Period Variability (PPQ)</label>
                   <input type="number" id="mdvp-ppq" name="MDVP:PPQ" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="jitter-ddp" class="lang" key="jitter-ddp">Jitter:DDP</label>
+                  <label for="jitter-ddp" class="lang" key="jitter-ddp">Relative Jitter (DDP)</label>
                   <input type="number" id="jitter-ddp" name="Jitter:DDP" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="mdvp-shimmer" class="lang" key="mdvp-shimmer">MDVP:Shimmer</label>
+                  <label for="mdvp-shimmer" class="lang" key="mdvp-shimmer">Voice Amplitude Variation</label>
                   <input type="number" id="mdvp-shimmer" name="MDVP:Shimmer" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="mdvp-shimmer-db" class="lang" key="mdvp-shimmer-db">MDVP:Shimmer(dB)</label>
+                  <label for="mdvp-shimmer-db" class="lang" key="mdvp-shimmer-db">Voice Amplitude Variation (dB)</label>
                   <input type="number" id="mdvp-shimmer-db" name="MDVP:Shimmer(dB)" step="0.01" required min="0" max="5">
                 </div>
               
                 <div class="form-group">
-                  <label for="shimmer-apq3" class="lang" key="shimmer-apq3">Shimmer:APQ3</label>
+                  <label for="shimmer-apq3" class="lang" key="shimmer-apq3">	Amplitude Perturbation Quotient (3 cycles)</label>
                   <input type="number" id="shimmer-apq3" name="Shimmer:APQ3" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="shimmer-apq5" class="lang" key="shimmer-apq5">Shimmer:APQ5</label>
+                  <label for="shimmer-apq5" class="lang" key="shimmer-apq5">Amplitude Perturbation Quotient (5 cycles)</label>
                   <input type="number" id="shimmer-apq5" name="Shimmer:APQ5" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="mdvp-apq" class="lang" key="mdvp-apq">MDVP:APQ</label>
+                  <label for="mdvp-apq" class="lang" key="mdvp-apq">Average Amplitude Perturbation</label>
                   <input type="number" id="mdvp-apq" name="MDVP:APQ" step="0.0001" required min="0" max="1">
                 </div>
               
                 <div class="form-group">
-                  <label for="shimmer-dda" class="lang" key="shimmer-dda">Shimmer:DDA</label>
+                  <label for="shimmer-dda" class="lang" key="shimmer-dda">Difference of Amplitude Perturbations (DDA)</label>
                   <input type="number" id="shimmer-dda" name="Shimmer:DDA" step="0.0001" required min="0" max="1">
                 </div>
               
@@ -449,6 +465,11 @@
         
         <div class="contact-form">
           <h3 class="lang" key="contact-form-title">Send Us a Message</h3>
+          {% if contact_success %}
+            <div class="success" style="margin-bottom:1rem;">Your message has been sent successfully!</div>
+          {% elif contact_error %}
+            <div class="error" style="margin-bottom:1rem;">Error sending message: {{ contact_error }}</div>
+          {% endif %}
           <form action="/submit-contact" method="post">
             <div class="form-group">
               <label for="name" class="lang" key="contact-name">Name</label>
@@ -537,5 +558,22 @@
       </div>
     </div>
   </footer>
+
+  <!-- Login/Register Modal -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span class="close-modal" id="close-auth-modal">&times;</span>
+      <div id="modal-tabs">
+        <button id="modal-login-tab" class="modal-tab active">Login</button>
+        <button id="modal-register-tab" class="modal-tab">Register</button>
+      </div>
+      <div id="modal-login-form" class="modal-form active">
+        <!-- Login form will be injected here by JS -->
+      </div>
+      <div id="modal-register-form" class="modal-form">
+        <!-- Register form will be injected here by JS -->
+      </div>
+    </div>
+  </div>
 </body>
 </html>

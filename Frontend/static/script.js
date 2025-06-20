@@ -172,6 +172,116 @@ document.addEventListener('DOMContentLoaded', function() {
   ajaxFormHandler('heart-form', '/predict/heart', 'heart-result');
   ajaxFormHandler('diabetes-form', '/predict/diabetes', 'diabetes-result');
   ajaxFormHandler('parkinsons-form', '/predict/parkinsons', 'parkinsons-result');
+
+  // Modal logic for login/register
+  injectAuthForms();
+
+  // Modal open/close logic
+  document.getElementById('login-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    showAuthModal('login');
+  });
+  document.getElementById('register-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    showAuthModal('register');
+  });
+  document.getElementById('close-auth-modal').addEventListener('click', function() {
+    hideAuthModal();
+  });
+  document.getElementById('modal-login-tab').addEventListener('click', function() {
+    showAuthModal('login');
+  });
+  document.getElementById('modal-register-tab').addEventListener('click', function() {
+    showAuthModal('register');
+  });
+
+  // AJAX login
+  document.addEventListener('submit', function(e) {
+    if (e.target && e.target.id === 'modal-login-form-inner') {
+      e.preventDefault();
+      const username = document.getElementById('modal-login-username').value;
+      const password = document.getElementById('modal-login-password').value;
+      fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+      })
+      .then(res => {
+        if (res.redirected) {
+          hideAuthModal();
+          window.location.reload();
+        } else if (res.status === 401) {
+          document.getElementById('modal-login-error').innerText = 'Invalid username or password.';
+          document.getElementById('modal-login-error').style.display = 'block';
+        } else {
+          return res.text().then(t => { throw new Error(t); });
+        }
+      })
+      .catch(err => {
+        document.getElementById('modal-login-error').innerText = err.message;
+        document.getElementById('modal-login-error').style.display = 'block';
+      });
+    }
+    // AJAX register
+    if (e.target && e.target.id === 'modal-register-form-inner') {
+      e.preventDefault();
+      const username = document.getElementById('modal-register-username').value;
+      const email = document.getElementById('modal-register-email').value;
+      const password = document.getElementById('modal-register-password').value;
+      fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      })
+      .then(res => {
+        if (res.status === 200) {
+          hideAuthModal();
+          window.location.reload();
+        } else if (res.status === 400) {
+          document.getElementById('modal-register-error').innerText = 'Username or email already exists.';
+          document.getElementById('modal-register-error').style.display = 'block';
+        } else {
+          return res.text().then(t => { throw new Error(t); });
+        }
+      })
+      .catch(err => {
+        document.getElementById('modal-register-error').innerText = err.message;
+        document.getElementById('modal-register-error').style.display = 'block';
+      });
+    }
+  });
+
+  // Protect features: if not logged in, clicking any .tab-btn or .chatbot-btn or .service-card opens modal
+  function protectFeature(selector) {
+    document.querySelectorAll(selector).forEach(el => {
+      el.addEventListener('click', function(e) {
+        if (document.body.classList.contains('user-logged-out')) {
+          e.preventDefault();
+          e.stopPropagation();
+          showAuthModal('login');
+        }
+      });
+    });
+  }
+  protectFeature('.tab-btn');
+  protectFeature('.chatbot-btn');
+  protectFeature('.service-card');
+
+  // User icon dropdown logic
+  const userIcon = document.getElementById('user-icon');
+  const userMenu = document.getElementById('user-menu');
+  const userDropdown = document.getElementById('user-dropdown');
+  if (userIcon && userMenu && userDropdown) {
+    userIcon.addEventListener('click', function(e) {
+      e.stopPropagation();
+      userMenu.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e) {
+      if (!userMenu.contains(e.target)) {
+        userMenu.classList.remove('open');
+      }
+    });
+  }
 });
 
 // Function to show image preview
@@ -384,3 +494,68 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Modal logic for login/register
+function injectAuthForms() {
+  // Login form HTML
+  const loginForm = `
+    <form id="modal-login-form-inner">
+      <div class="form-group">
+        <label for="modal-login-username">Username</label>
+        <input type="text" id="modal-login-username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="modal-login-password">Password</label>
+        <input type="password" id="modal-login-password" name="password" required>
+      </div>
+      <button type="submit" class="btn primary-btn" style="width:100%;margin-top:1rem;">Login</button>
+      <div id="modal-login-error" class="error" style="display:none;margin-top:0.5rem;"></div>
+    </form>
+  `;
+  // Register form HTML
+  const registerForm = `
+    <form id="modal-register-form-inner">
+      <div class="form-group">
+        <label for="modal-register-username">Username</label>
+        <input type="text" id="modal-register-username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="modal-register-email">Email</label>
+        <input type="email" id="modal-register-email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="modal-register-password">Password</label>
+        <input type="password" id="modal-register-password" name="password" required>
+      </div>
+      <button type="submit" class="btn primary-btn" style="width:100%;margin-top:1rem;">Register</button>
+      <div id="modal-register-error" class="error" style="display:none;margin-top:0.5rem;"></div>
+    </form>
+  `;
+  document.getElementById('modal-login-form').innerHTML = loginForm;
+  document.getElementById('modal-register-form').innerHTML = registerForm;
+}
+
+function showAuthModal(tab) {
+  const modal = document.getElementById('auth-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+  document.getElementById('modal-login-form').classList.remove('active');
+  document.getElementById('modal-register-form').classList.remove('active');
+  document.getElementById('modal-login-tab').classList.remove('active');
+  document.getElementById('modal-register-tab').classList.remove('active');
+  if (tab === 'register') {
+    document.getElementById('modal-register-form').classList.add('active');
+    document.getElementById('modal-register-tab').classList.add('active');
+  } else {
+    document.getElementById('modal-login-form').classList.add('active');
+    document.getElementById('modal-login-tab').classList.add('active');
+  }
+}
+
+function hideAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}

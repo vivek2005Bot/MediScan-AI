@@ -5,3 +5,5 @@ scikit-learn
 numpy
 pandas
 sqlalchemy
+Werkzeug
+Flask-Mail

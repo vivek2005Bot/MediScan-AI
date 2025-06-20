@@ -1065,3 +1065,124 @@ footer {
     padding: var(--spacing-md);
   }
 }
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal-content {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem 2.5rem;
+  min-width: 340px;
+  max-width: 95vw;
+  position: relative;
+  animation: fadeIn 0.2s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.close-modal {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-modal:hover {
+  color: var(--accent);
+}
+#modal-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.modal-tab {
+  flex: 1;
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.modal-tab.active {
+  border-bottom: 2px solid var(--primary);
+  color: var(--primary);
+}
+.modal-form {
+  display: none;
+}
+.modal-form.active {
+  display: block;
+}
+.user-logged-out .user-menu {
+  display: none;
+}
+.user-logged-in .auth-buttons {
+  display: none;
+}
+.auth-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+.user-logged-out #auth-modal {
+    display: none;
+}
+.user-logged-in #auth-modal {
+    display: none;
+}
+.user-menu {
+  position: relative;
+  align-items: center;
+  margin-left: 1rem;
+}
+.user-icon {
+  font-size: 2rem;
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.user-icon:hover {
+  color: var(--primary);
+}
+.user-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 1rem 1.5rem 1rem 1.5rem;
+  min-width: 140px;
+  z-index: 1001;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.user-label {
+  font-size: 1rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.user-menu.open .user-dropdown {
+  display: flex;
+}
